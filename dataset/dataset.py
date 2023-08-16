@@ -115,7 +115,6 @@ class IncrementalInstanceSegmentationDataset(data.Dataset):
                  train=True,
                  val_on_trainset=False,
                  transform=None,
-                 pam_transform=None,
                  idxs_path=None,
                  masking=True,
                  overlap=True,
@@ -129,7 +128,6 @@ class IncrementalInstanceSegmentationDataset(data.Dataset):
                  ann_file=None):
         
         self.transform = transform
-        self.pam_transform = pam_transform
         self.weakly = weakly  # don't use weakly in val
         self.train = train
 
@@ -207,7 +205,6 @@ class IncrementalInstanceSegmentationDataset(data.Dataset):
             # seg_map: semantic segmentaion
             # mask: instance segmentation
             # lbl_1h: image labels
-            pam_img = self.pam_transform(img)
 
             label = self.concat_PIL(seg_map, mask)
             img, label = self.transform(img, label)

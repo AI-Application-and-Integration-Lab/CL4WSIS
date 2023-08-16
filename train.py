@@ -304,7 +304,7 @@ class Trainer:
                         pseudolabeler_eval = self.pseudolabeler
                         pseudolabeler_eval.eval()
                         
-                        feat_body = features['body'][:bs]
+                        feat_body = features['body']
                         feat_body_eval = features['body']
                             
                         int_masks = pseudolabeler_eval(feat_body_eval)
@@ -318,8 +318,6 @@ class Trainer:
                             
                         int_masks_raw = self.pseudolabeler(feat_body)
                         
-                        int_masks_raw2 = int_masks_raw
-                        l1h2 = l1h
                         if self.opts.flac:
                             A = int_masks_raw
                             A_rot = torch.sigmoid(torch.mean(A[bs * 2: bs * 3, self.old_classes:], dim=1))
@@ -332,22 +330,19 @@ class Trainer:
                             A_rot_target = rotate(A_target.clone(), angle=angle).detach()     
                             flac_loss = (self.lde_loss(A_ori, A_target) + self.lde_loss(A_flip, A_target) + self.lde_loss(A_rot, A_rot_target)) / 3
                             
-                            int_masks_raw2 = int_masks_raw2[:bs]
-                            
                             int_masks_raw = int_masks_raw[:bs]
-                            int_masks = int_masks[:bs]
                         
                         if self.peakgenerator is not None:
                             self.peakgenerator.train()
-                            peak_logits, _ = self.peakgenerator(int_masks_raw2)
+                            peak_logits, _ = self.peakgenerator(int_masks_raw)
                         
                         if self.opts.no_mask:
-                            l_cam_new = bce_loss(int_masks_raw2, l1h2, mode=self.opts.cam, reduction='mean') 
+                            l_cam_new = bce_loss(int_masks_raw, l1h, mode=self.opts.cam, reduction='mean') 
                         else:
-                            l_cam_new = bce_loss(int_masks_raw2, l1h2[:, self.old_classes - 1:],  mode=self.opts.cam, reduction='mean')
+                            l_cam_new = bce_loss(int_masks_raw, l1h[:, self.old_classes - 1:],  mode=self.opts.cam, reduction='mean')
                             
                         if self.peakgenerator is not None:
-                            l_peak_cam_new = F.binary_cross_entropy_with_logits(peak_logits[:, self.old_classes - 1:], l1h2[:, self.old_classes - 1:])
+                            l_peak_cam_new = F.binary_cross_entropy_with_logits(peak_logits[:, self.old_classes - 1:], l1h[:, self.old_classes - 1:])
                         outputs_old_seg = F.interpolate(outputs_old['seg'], size=int_masks.shape[-2:], mode="bilinear", align_corners=False)
                         outputs_seg = F.interpolate(outputs['seg'], size=int_masks.shape[-2:], mode="bilinear", align_corners=False)
                         

@@ -25,14 +25,6 @@ def get_dataset(opts):
                             std=[0.229, 0.224, 0.225]),
         ])
     test_transform = val_transform
-    
-    pam_transform = transform.Compose([
-        transform.RandomResizedCrop(opts.crop_size, (0.5, 2)),
-        transform.RandomHorizontalFlip(),
-        transform.ToTensor(),
-        transform.Normalize(mean=[0.485, 0.456, 0.406],
-                            std=[0.229, 0.224, 0.225]),
-    ])
 
     step_dict = tasks.get_task_dict(opts.dataset, opts.task, opts.step)
     labels, labels_old, path_base = tasks.get_task_labels(opts.dataset, opts.task, opts.step)
@@ -62,7 +54,7 @@ def get_dataset(opts):
     if not os.path.exists(path_base):
         os.makedirs(path_base, exist_ok=True)
 
-    train_dst = dataset(root=opts.data_root, step_dict=step_dict, train=True, transform=train_transform, pam_transform=pam_transform,
+    train_dst = dataset(root=opts.data_root, step_dict=step_dict, train=True, transform=train_transform,
                         idxs_path=path_base_train + f"/train-{opts.step}.npy", masking_value=masking_value,
                         masking=not opts.no_mask, overlap=opts.overlap, step=opts.step, weakly=opts.weakly,
                         pseudo=pseudo, ann_file=opts.data_root + "/voc/pascal_sbd_train.json", )
