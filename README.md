@@ -111,7 +111,7 @@ where `pretr_seg` should be the path to the model after phase 1 training. `phase
 While we have taken steps to set the random seed, we note that our implementation may still encounter minor differences in each run. 
 
 ## Cite us
-If you find this implementation helpful to your research, please consider citing:
+If you find this work helpful to your research, please consider citing:
 ```
 @InProceedings{Hsieh_2023_ICCV,
     author    = {Hsieh, Yu-Hsing and Chen, Guan-Sheng and Cai, Shun-Xian and Wei, Ting-Yun and Yang, Huei-Fang and Chen, Chu-Song},
